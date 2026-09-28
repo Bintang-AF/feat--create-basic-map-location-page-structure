@@ -261,4 +261,295 @@
 
     </div>
 
+  <!-- SEARCH -->
+    <div class="search-box">
 
+        <div class="search-title">
+            🔎 Cari Daerah
+        </div>
+
+        <div class="search-area">
+
+            <input
+                type="text"
+                id="kota"
+                placeholder="Contoh: Jakarta, Yogyakarta, Bandung..."
+            >
+
+            <button onclick="cariLokasi()">
+                Cari
+            </button>
+
+        </div>
+
+        <div id="status"></div>
+
+    </div>
+
+
+    <!-- HASIL -->
+    <div id="hasil">
+
+        <div class="empty">
+            📍 Masukkan nama daerah untuk mencari lokasi
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Location data provided by MapTiler
+    </div>
+
+</div>
+
+
+<script>
+
+    function cariLokasi() {
+
+        const kota = $("#kota").val().trim();
+
+        if (kota === "") {
+
+            $("#status").html("⚠️ Silakan masukkan nama daerah terlebih dahulu.");
+
+            return;
+        }
+
+
+        $("#status").html("🔄 Sedang mencari lokasi...");
+
+        $("#hasil").html("");
+
+
+        const apiKey = "h4KTHbuwIN0jHyJS8dr5";
+
+        const urlapi =
+            "https://api.maptiler.com/geocoding/"
+            + encodeURIComponent(kota)
+            + ".json?key="
+            + apiKey;
+
+
+        $.ajax({
+
+            url: urlapi,
+
+            method: "GET",
+
+            success: function(data) {
+
+                console.log(data);
+
+                $("#status").html(
+                    "✅ Ditemukan " + data.features.length + " hasil."
+                );
+
+
+                if (data.features.length === 0) {
+
+                    $("#hasil").html(`
+                        <div class="empty">
+                            ❌ Lokasi tidak ditemukan.
+                        </div>
+                    `);
+
+                    return;
+                }
+
+
+                data.features.forEach(function(feature) {
+
+                    // PLACE NAME
+                    const placeName =
+                        feature.place_name || "-";
+
+
+                    // MATCHING TEXT
+                    const matchingText =
+                        feature.matching_text || "-";
+
+
+                    // TYPE
+                    let tipe = "-";
+
+                    if (
+                        feature.place_type &&
+                        feature.place_type.length > 0
+                    ) {
+
+                        tipe = feature.place_type.join(", ");
+
+                    }
+
+
+                    // COORDINATES
+                    let longitude = "-";
+                    let latitude = "-";
+
+                    if (
+                        feature.geometry &&
+                        feature.geometry.coordinates
+                    ) {
+
+                        longitude =
+                            feature.geometry.coordinates[0];
+
+                        latitude =
+                            feature.geometry.coordinates[1];
+
+                    }
+
+
+                    // MEMBUAT CARD
+                    const card = `
+
+                        <div class="result-card">
+
+                            <div class="result-header">
+
+                                <div class="location-icon">
+                                    📍
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        ${placeName}
+                                    </h2>
+
+                                    <span>
+                                        MapTiler Geocoding Result
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-grid">
+
+
+                                <!-- PLACE NAME -->
+                                <div class="data-item">
+
+                                    <span class="data-label">
+                                        Place Name
+                                    </span>
+
+                                    <span class="data-value">
+                                        ${placeName}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- MATCHING TEXT -->
+                                <div class="data-item">
+
+                                    <span class="data-label">
+                                        Matching Text
+                                    </span>
+
+                                    <span class="data-value">
+                                        ${matchingText}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- TYPE -->
+                                <div class="data-item">
+
+                                    <span class="data-label">
+                                        Type
+                                    </span>
+
+                                    <span class="type-badge">
+                                        ${tipe}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- COORDINATES -->
+                                <div class="data-item">
+
+                                    <span class="data-label">
+                                        Coordinates
+                                    </span>
+
+                                    <span class="data-value coordinate">
+
+                                        Longitude:
+                                        ${longitude}
+
+                                        <br>
+
+                                        Latitude:
+                                        ${latitude}
+
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    $("#hasil").append(card);
+
+                });
+
+            },
+
+
+            error: function(error) {
+
+                console.log(error);
+
+                $("#status").html(
+                    "❌ Terjadi kesalahan saat mengambil data."
+                );
+
+                $("#hasil").html(`
+
+                    <div class="empty">
+
+                        ❌ Gagal mendapatkan data lokasi.
+
+                        <br><br>
+
+                        Periksa koneksi internet atau API Key.
+
+                    </div>
+
+                `);
+
+            }
+
+        });
+
+    }
+
+
+    // Bisa mencari menggunakan tombol ENTER
+    $("#kota").keypress(function(event) {
+
+        if (event.key === "Enter") {
+
+            cariLokasi();
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
