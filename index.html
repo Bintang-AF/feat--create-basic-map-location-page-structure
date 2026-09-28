@@ -201,4 +201,64 @@
             color: #2563eb;
         }
 
+ /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #cbd5e1;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+
+            body {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .search-area {
+                flex-direction: column;
+            }
+
+            .search-area button {
+                padding: 14px;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="map-icon">
+            🗺️
+        </div>
+
+        <h1>Map Location Finder</h1>
+
+        <p>
+            Cari informasi daerah menggunakan MapTiler Geocoding API
+        </p>
+
+    </div>
+
 
